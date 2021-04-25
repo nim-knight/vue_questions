@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+  <script>
+    const lifecycleHooks = [
+      `beforeCreate`,
+      `created`,
+      `beforeMount`,
+      `mounted`,
+      `beforeUpdate`,
+      `updated`,
+      `activated`,
+      `deactivated`,
+      `beforeDestroy`,
+      `destroyed`,
+      `errorCaptured`,
+    ]
+    
+    function getLifecycleMixins(name) {
+      const lifecycleMixins = {}
+      lifecycleHooks.forEach(hookName => {
+        lifecycleMixins[hookName] = function () {
+          console.log(`${name} ${hookName}`)
+        }
+      })
+      return lifecycleMixins
+    }
+
+    const Child = {
+      template: '<div>Child {{value}}</div>',
+      props: {
+        value: String
+      },
+      ...getLifecycleMixins('Child')
+    }
+
+    const parent = new Vue({
+      el: '#app',
+      template: '<child :value="value"></child>',
+      data() {
+        return {
+          value: 'hello'
+        }
+      },
+      components: {
+        Child
+      },
+      ...getLifecycleMixins('Parent')
+    })
+    Promise.resolve().then(() => {
+      parent.value = 'hello world'
+    })
+    Promise.resolve().then(() => {
+      parent.$destroy()
+    })
+    /** 
+     * 请写出以上代码的控制台输出
+     */
+  </script>
+</body>
+</html>
